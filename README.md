@@ -9,7 +9,7 @@ Information on writing plugins for PhoneGap 2.0 was taken from [this blog](http:
 
 This plugin uses [plugman](https://github.com/apache/cordova-plugman)
 
-`cordova plugins add https://github.com/8zrealestate/AppPreferences`
+`cordova plugins add https://github.com/vdmitriy/AppPreferences`
 
 ## Using the plugin ##
 
