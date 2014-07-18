@@ -1,11 +1,13 @@
 //
 //  applicationPreferences.m
-//  
+//
 //
 //  Created by Tue Topholm on 31/01/11.
 //  Copyright 2011 Sugee. All rights reserved.
 //
 // THIS HAVEN'T BEEN TESTED WITH CHILD PANELS YET.
+//
+// Updated for Phonegap 3.x by Dave Alden (dave@workingedge.co.uk) on 05 Oct 13
 
 #import "applicationPreferences.h"
 
@@ -14,16 +16,15 @@
 
 
 
-- (void)getSetting:(CDVInvokedUrlCommand*)command
+- (void)getSetting:(CDVInvokedUrlCommand*)command;
 {
-        NSString* callbackID = command.callbackId;
 	NSString* jsString;
 
-        NSDictionary *options   = [command.arguments objectAtIndex:0];
-    	NSString *settingsName = [options objectForKey:@"key"];
+
+		NSString *settingsName = [command.arguments objectAtIndex:0];
         CDVPluginResult* result = nil;
-	
-		@try 
+
+		@try
 		{
 			//At the moment we only return strings
 			//bool: true = 1, false=0
@@ -31,48 +32,46 @@
 			if(returnVar == nil)
 			{
 				returnVar = [self getSettingFromBundle:settingsName]; //Parsing Root.plist
-				
-				if (returnVar == nil) 
+
+				if (returnVar == nil)
 					@throw [NSException exceptionWithName:nil reason:@"Key not found" userInfo:nil];;
 			}
 			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:returnVar];
-			jsString = [result toSuccessCallbackString:callbackID];		
+			jsString = [result toSuccessCallbackString:command.callbackId];
 		}
-		@catch (NSException * e) 
+		@catch (NSException * e)
 		{
 			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT messageAsString:[e reason]];
-            jsString = [result toErrorCallbackString:callbackID];
+            jsString = [result toErrorCallbackString:command.callbackId];
 		}
-		@finally 
+		@finally
 		{
 			[self writeJavascript:jsString]; //Write back to JS
 		}
 }
 
-- (void)setSetting:(CDVInvokedUrlCommand*)command
+- (void)setSetting:(CDVInvokedUrlCommand*)command;
 {
-    NSString* callbackID = command.callbackId;
-	NSString* jsString;    
+	NSString* jsString;
     CDVPluginResult* result;
 
-    NSDictionary *options   = [command.arguments objectAtIndex:0];
-    NSString *settingsName = [options objectForKey:@"key"];
-    NSString *settingsValue = [options objectForKey:@"value"];
+    NSString *settingsName = [command.arguments objectAtIndex:0];
+    NSString *settingsValue = [command.arguments objectAtIndex:1];
 
-		
-    @try 
+
+    @try
     {
         [[NSUserDefaults standardUserDefaults] setValue:settingsValue forKey:settingsName];
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        jsString = [result toSuccessCallbackString:callbackID];
-			
+        jsString = [result toSuccessCallbackString:command.callbackId];
+
     }
-    @catch (NSException * e) 
+    @catch (NSException * e)
     {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT messageAsString:[e reason]];
-        jsString = [result toErrorCallbackString:callbackID];
+        jsString = [result toErrorCallbackString:command.callbackId];
     }
-    @finally 
+    @finally
     {
         [self writeJavascript:jsString]; //Write back to JS
     }
@@ -88,16 +87,16 @@
 	NSString *pathStr = [[NSBundle mainBundle] bundlePath];
 	NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:@"Settings.bundle"];
 	NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:@"Root.plist"];
-	
+
 	NSDictionary *settingsDict = [NSDictionary dictionaryWithContentsOfFile:finalPath];
 	NSArray *prefSpecifierArray = [settingsDict objectForKey:@"PreferenceSpecifiers"];
 	NSDictionary *prefItem;
 	for (prefItem in prefSpecifierArray)
 	{
-		if ([[prefItem objectForKey:@"Key"] isEqualToString:settingsName]) 
-			return [prefItem objectForKey:@"DefaultValue"];		
+		if ([[prefItem objectForKey:@"Key"] isEqualToString:settingsName])
+			return [prefItem objectForKey:@"DefaultValue"];
 	}
 	return nil;
-	
+
 }
 @end
