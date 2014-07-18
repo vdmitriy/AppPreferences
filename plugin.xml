@@ -7,7 +7,7 @@
     <engine name="cordova" version=">=2.9.0" />
   </engines>
   <name>Preferences Access Plugin</name>
-
+  <description>Application Preferences plugin for Phonegap</description>
   <platform name="android">
  	<js-module src="src/android/applicationPreferences.js" name="applicationPreferences">
               <clobbers target="applicationPreferences" />
