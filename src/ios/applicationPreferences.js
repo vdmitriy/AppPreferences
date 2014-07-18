@@ -1,19 +1,27 @@
-function applicationPreferences() {}
+//
+//  applicationPreferences.js
+//
+//
+//  Created by Tue Topholm on 31/01/11.
+//  Copyright 2011 Sugee. All rights reserved.
+//
+//
+// Updated for Phonegap 3.x by Dave Alden (dave@workingedge.co.uk) on 05 Oct 13
 
-applicationPreferences.prototype.get = function(key,success,fail) 
-{
-    var args = {};
-    args.key = key;
-    cordova.exec(success,fail,"applicationPreferences","getSetting",[args]);
-};
+cordova.define("applicationPreferences", function(require, exports, module) {
+	var exec = require('cordova/exec');
+	
+	var ApplicationPreferences = function() {};
 
-applicationPreferences.prototype.set = function(key,value,success,fail) 
-{
-    var args = {};
-    args.key = key;
-    args.value = value;
-    cordova.exec(success,fail,"applicationPreferences","setSetting",[args]);
-};
 
-	module.exports = new applicationPreferences();
-
+	ApplicationPreferences.prototype.get = function(key, successFn, errorFn) {
+	    exec(successFn, errorFn, 'applicationPreferences', 'getSetting', [key]);
+	}
+	
+    	ApplicationPreferences.prototype.set = function(key,value, successFn, errorFn) {
+            exec(successFn, errorFn, 'applicationPreferences', 'setSetting', [key,value]);
+    	}
+	
+	var applicationPreferences = new ApplicationPreferences();
+	module.exports = applicationPreferences;
+});
